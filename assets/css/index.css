@@ -15,7 +15,7 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Reset de Links e Cores */
+/* Reset de Links */
 a {
     text-decoration: none;
     color: inherit;
@@ -124,6 +124,10 @@ header {
     width: 100%;
 }
 
+.product-card {
+    background: transparent;
+}
+
 .img-wrapper {
     width: 100%;
     aspect-ratio: 1 / 1.2;
@@ -165,7 +169,7 @@ header {
     display: block;
 }
 
-/* --- BOTÕES DINÂMICOS (Adicionar vs Seletor) --- */
+/* Botões Dinâmicos */
 .action-container {
     width: 100%;
     height: 48px;
@@ -224,7 +228,7 @@ header {
     font-weight: 600;
 }
 
-/* Toast/Aviso Elegante */
+/* Toast/Aviso */
 .toast-aviso {
     position: fixed;
     top: 20px;
@@ -248,7 +252,7 @@ header {
     top: 40px;
 }
 
-/* Rodapé */
+/* Rodapé e Hovers Coloridos */
 footer {
     background-color: #fcfcfc;
     border-top: 1px solid #f0f0f0;
@@ -263,9 +267,34 @@ footer {
     margin-bottom: 20px;
 }
 
+.footer-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    transition: var(--transition);
+}
+
 .footer-link i {
     font-size: 1.5rem;
     color: var(--primary-color);
+    transition: var(--transition);
+}
+
+/* Hover Instagram */
+.footer-link.instagram:hover {
+    color: #E1306C;
+}
+.footer-link.instagram:hover i {
+    color: #E1306C;
+}
+
+/* Hover WhatsApp */
+.footer-link.whatsapp:hover {
+    color: #25D366;
+}
+.footer-link.whatsapp:hover i {
+    color: #25D366;
 }
 
 @media (max-width: 768px) {

@@ -3,7 +3,7 @@ const produtosJSON = [
     { id: 2, nome: "Anel Solitário", desc: "Cristal cravejado em prata 925 legítima.", preco: 159.00, img: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600" },
     { id: 3, nome: "Brincos de Argola", desc: "Banho de ouro rosé com acabamento polido.", preco: 85.50, img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600" },
     { id: 4, nome: "Pulseira Veneziana", desc: "Design minimalista em prata com extensor.", preco: 120.00, img: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600" },
-    { id: 5, nome: "Relógio Elegance", desc: "Pulseira de aço inoxidável e mostrador em quartzo.", preco: 450.90, img: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?q=80&w=600" },
+    { id: 2, nome: "Relógio Elegance", desc: "Pulseira de aço inoxidável e mostrador em quartzo.", preco: 450.90, img: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?q=80&w=600" },
     { id: 6, nome: "Pingente Infinito", desc: "Símbolo em ródio negro com microzircônias.", preco: 75.00, img: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=600" }
 ];
 
@@ -29,7 +29,6 @@ function exibirAviso(mensagem) {
     setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// Decide qual botão renderizar (Adicionar ou Seletor + -)
 function renderActionButton(product) {
     const itemInCart = carrinho.find(item => item.id === product.id);
     
@@ -44,7 +43,7 @@ function renderActionButton(product) {
     }
     return `
         <button class="add-to-cart" onclick="addToCart(${product.id})">
-            Adicionar ao Carrinho <i class="fa-solid fa-cart-shopping"></i>
+            Adicionar ao Carrinho<i class="fa-solid fa-cart-shopping"></i>
         </button>
     `;
 }
@@ -89,12 +88,10 @@ function saveAndUpdate() {
     updateBadge();
     loadCatalog(produtosJSON); 
     
-    // Animação do Badge
     cartBadge.style.transform = "scale(1.4)";
     setTimeout(() => cartBadge.style.transform = "scale(1)", 200);
 }
 
-// Filtro de busca preservado
 document.getElementById('search-input').addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
     const filtered = produtosJSON.filter(p => 
@@ -103,6 +100,5 @@ document.getElementById('search-input').addEventListener('input', (e) => {
     loadCatalog(filtered);
 });
 
-// Inicialização
 loadCatalog(produtosJSON);
 updateBadge();
