@@ -65,7 +65,7 @@ app.delete('/api/produtos/:id', async (req, res) => {
 // Rota para validar login (Frontend -> Backend)
 app.post('/api/login', (req, res) => {
     const { senha } = req.body;
-    const senhaMestra = process.env.PASSWORD;
+    const senhaMestra = process.env.password;
 
     if (senha && senha.trim() === senhaMestra.trim()) {
         res.json({ success: true });
