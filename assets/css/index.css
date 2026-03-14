@@ -297,6 +297,49 @@ footer {
     color: #25D366;
 }
 
+/* Filtros de Categoria */
+.filters-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+    padding: 0 8%;
+}
+
+.filter-btn {
+    background: #f4f4f4;
+    border: 1px solid #eee;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--text-dark);
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.filter-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* Tag de categoria no card */
+.category-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
 @media (max-width: 768px) {
     .catalog-container { grid-template-columns: 1fr 1fr; gap: 20px; }
 }

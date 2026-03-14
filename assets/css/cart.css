@@ -46,12 +46,18 @@ header {
     letter-spacing: 2px;
 }
 
+.continue-buying {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    text-decoration: none;
+}
+
 /* Conteúdo Principal */
 main {
     flex: 1;
     padding: 40px 8%;
     max-width: 1200px;
-    margin: auto;
+    margin: 0 auto;
     width: 100%;
 }
 
@@ -66,6 +72,7 @@ h1 {
     display: grid;
     grid-template-columns: 1fr 350px;
     gap: 40px;
+    align-items: start;
 }
 
 /* Lista de Itens */
@@ -75,17 +82,17 @@ h1 {
 
 .cart-item {
     display: grid;
-    grid-template-columns: 100px 1fr auto auto;
-    align-items: center;
-    gap: 20px;
-    padding: 20px 0;
+    grid-template-columns: 100px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 15px 20px;
+    padding: 25px 0;
     border-bottom: 1px solid var(--border-color);
 }
 
 .item-img {
+    grid-row: span 2;
     width: 100px;
-    height: 100px;
-    background: #f4f4f4;
+    height: 120px;
     object-fit: cover;
     border-radius: 4px;
 }
@@ -93,7 +100,7 @@ h1 {
 .item-info h3 {
     font-family: 'Playfair Display', serif;
     font-size: 1.1rem;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
 .item-info p {
@@ -101,43 +108,66 @@ h1 {
     font-size: 0.85rem;
 }
 
-/* Controles de Quantidade */
+.remove-btn {
+    color: #cc0000;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    display: block;
+    -webkit-appearance: none;
+}
+
+/* Controles de Quantidade e Preço Individual */
+.item-controls {
+    grid-column: 2;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
 .item-qty {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Distribui + e - de forma igual */
     border: 1px solid var(--border-color);
     border-radius: 20px;
-    padding: 5px 15px;
+    padding: 4px 8px; /* Ajuste leve no respiro lateral */
     background: #fff;
+    width: 85px; /* TRAVA A LARGURA: impede que os botões se afastem */
 }
 
 .item-qty button {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0 10px;
-    font-size: 1.2rem;
+    padding: 0;
+    width: 25px; /* Área de clique fixa */
+    height: 25px;
+    font-size: 1.1rem;
     color: var(--text-dark);
-    /* Correção iOS */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     -webkit-appearance: none;
 }
 
-.item-price {
-    font-weight: 600;
-    min-width: 80px;
-    text-align: right;
-}
-
-.remove-btn {
-    color: #cc0000;
-    cursor: pointer;
+.item-qty span {
     font-size: 0.9rem;
-    margin-top: 5px;
-    background: none;
-    border: none;
-    text-decoration: underline;
-    /* Correção iOS */
-    -webkit-appearance: none;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Preço Total do Item (Direita) */
+.item-total-price {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    font-weight: 600;
+    font-size: 1.1rem;
+    align-self: center;
+    text-align: right;
 }
 
 /* Resumo do Pedido */
@@ -145,41 +175,48 @@ h1 {
     background: #fafafa;
     padding: 30px;
     border-radius: 8px;
-    height: fit-content;
+}
+
+.cart-summary h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    margin-bottom: 25px;
 }
 
 .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
+    font-size: 0.95rem;
 }
 
-.summary-total {
+.summary-row.total {
     border-top: 1px solid var(--border-color);
-    padding-top: 15px;
-    margin-top: 15px;
+    padding-top: 20px;
+    margin-top: 20px;
     font-weight: 700;
     font-size: 1.2rem;
 }
 
-/* Botão Finalizar - CORRIGIDO PARA IOS */
+.free-tag {
+    color: #28a745;
+    font-weight: 500;
+}
+
 .checkout-btn {
     width: 100%;
-    padding: 15px;
+    padding: 16px;
     background: var(--primary-color);
-    color: white !important; /* Força cor branca no iPhone */
+    color: white !important;
     border: none;
     border-radius: 4px;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 25px;
     transition: var(--transition);
-    
-    /* Reset nativo iOS */
     -webkit-appearance: none;
-    appearance: none;
 }
 
 .checkout-btn:hover {
@@ -187,62 +224,71 @@ h1 {
 }
 
 .back-link {
-    display: inline-block;
+    display: block;
+    text-align: center;
     margin-top: 20px;
     color: var(--text-light);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 /* Rodapé */
 footer {
-    background-color: #fcfcfc;
-    border-top: 1px solid #f0f0f0;
     padding: 40px 8%;
     text-align: center;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-light);
+    font-size: 0.8rem;
 }
 
-/* Responsividade */
+/* AJUSTES RESPONSIVOS (MOBILE) */
 @media (max-width: 900px) {
     .cart-container {
         grid-template-columns: 1fr;
     }
+}
+
+@media (max-width: 600px) {
+    main { padding: 20px 5%; }
     
     .cart-item {
         grid-template-columns: 80px 1fr;
-        gap: 15px;
+        grid-template-rows: auto auto auto;
+        gap: 10px 15px;
     }
-    
-    .item-qty, .item-price {
+
+    .item-img {
+        grid-row: span 3;
+        width: 80px;
+        height: 100px;
+    }
+
+    .item-total-price {
         grid-column: 2;
-        justify-self: start;
-    }
-    
-    .item-price {
+        grid-row: 3;
         text-align: left;
+        margin-top: 5px;
+    }
+
+    .item-controls {
+        grid-column: 2;
+        grid-row: 2;
     }
 }
 
-/* Estilo do Toast (Aviso elegante) */
+/* Toast */
 .toast-aviso {
     position: fixed;
     top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--text-dark);
+    background: var(--text-dark);
     color: white;
     padding: 12px 25px;
     border-radius: 30px;
-    font-size: 0.9rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     z-index: 2000;
     opacity: 0;
-    transition: opacity 0.3s, top 0.3s;
-    pointer-events: none;
+    transition: all 0.3s;
     border: 1px solid var(--primary-color);
 }
-
-.toast-aviso.show {
-    opacity: 1;
-    top: 40px;
-}
+.toast-aviso.show { opacity: 1; top: 40px; }
