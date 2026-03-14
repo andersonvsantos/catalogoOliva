@@ -1,0 +1,29 @@
+# Dependências (Pastas pesadas que o npm baixa)
+node_modules/
+dist/
+.npm/
+
+# Banco de Dados SQLite (Arquivo real que o Node gera)
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Segurança e Senhas (Caso você crie um arquivo .env no futuro)
+.env
+.DS_Store
+auth_token.json
+
+# Logs do Sistema
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# IDEs (Configurações do seu editor)
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

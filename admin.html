@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oliva - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/index.css"> <style>
+        .admin-container { padding: 40px 8%; max-width: 1000px; margin: 0 auto; }
+        .admin-form { background: #fafafa; padding: 30px; border-radius: 8px; margin-bottom: 40px; border: 1px solid #eee; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-grid input, .form-grid select { padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Poppins'; }
+        .full-width { grid-column: span 2; }
+        .btn-save { background: var(--primary-color); color: white; border: none; padding: 15px; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 15px; transition: 0.3s; }
+        
+        .admin-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .admin-table th, .admin-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .admin-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+        .btn-delete { color: #cc0000; background: none; border: none; cursor: pointer; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">OLIVA ADMIN</a>
+        <a href="index.html" class="continue-buying">Voltar para a Loja</a>
+    </header>
+
+    <main class="admin-container">
+        <h1>Gerenciar Produtos</h1>
+
+        <div id="admin-login-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999;">
+            <h2 style="color: #333; margin-bottom: 20px;">🔒 Painel Administrativo</h2>
+            <input type="password" id="senha-admin-input" placeholder="Digite a senha..." style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; width: 250px; margin-bottom: 15px;">
+            <button onclick="verificarSenhaManual()" style="background: #333; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">Entrar</button>
+        </div>
+
+        <div class="admin-form">
+            <h3>Novo Produto</h3>
+            <div class="form-grid">
+                <input type="text" id="adm-nome" placeholder="Nome do Produto">
+                <input type="text" id="adm-cat" placeholder="Categoria (Ex: Colares)">
+                <input type="number" id="adm-preco" placeholder="Preço (Ex: 250.50)">
+                <input type="text" id="adm-img" placeholder="URL da Imagem">
+                <input type="text" id="adm-desc" class="full-width" placeholder="Breve descrição">
+            </div>
+            <button class="btn-save" onclick="handleSave()">Salvar no SQLite <i class="fa-solid fa-database"></i></button>
+        </div>
+
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Img</th>
+                    <th>Produto</th>
+                    <th>Preço</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="admin-list">
+                </tbody>
+        </table>
+    </main>
+
+    <script src="./assets/js/admin.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+</body>
+</html>
