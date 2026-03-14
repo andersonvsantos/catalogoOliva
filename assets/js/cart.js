@@ -28,9 +28,16 @@ function renderCart() {
 }
 
 function changeQty(index, delta) {
-    if (carrinho[index].qty + delta > 0) {
-        carrinho[index].qty += delta;
+    const novaQuantidade = carrinho[index].qty + delta;
+
+    if (novaQuantidade > 0) {
+        // Se a nova quantidade for maior que zero, apenas atualiza
+        carrinho[index].qty = novaQuantidade;
         saveAndRender();
+    } else {
+        // Se chegar a zero, remove o item do carrinho
+        removeItem(index);
+        exibirAviso("Item removido do carrinho");
     }
 }
 
@@ -50,38 +57,51 @@ function updateTotals() {
     document.getElementById('total').innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
+// Função para criar e exibir o aviso elegante
+function exibirAviso(mensagem) {
+    // Cria o elemento se não existir
+    let toast = document.getElementById('toast-aviso');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-aviso';
+        toast.className = 'toast-aviso';
+        document.body.appendChild(toast);
+    }
+    
+    toast.innerText = mensagem;
+    toast.classList.add('show');
+    
+    // Esconde após 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Sua função de finalizar pedido atualizada
 function finalizarPedido() {
     if (carrinho.length === 0) {
-        alert("Seu carrinho está vazio!");
+        exibirAviso("Seu carrinho está vazio!"); // Substituído o alert
         return;
     }
 
-    // 1. Defina o seu número de WhatsApp (apenas números, com DDD)
     const meuNumero = "5511983606737"; 
 
-    // 2. Montar o cabeçalho da mensagem
     let mensagem = `*Novo Pedido - Oliva*%0A`;
     mensagem += `----------------------------%0A`;
 
-    // 3. Listar os itens do carrinho
     carrinho.forEach(item => {
         const subtotalItem = (item.preco * item.qty).toFixed(2).replace('.', ',');
         mensagem += `*${item.qty}x* ${item.nome}%0A`;
         mensagem += `Subtotal: R$ ${subtotalItem}%0A%0A`;
     });
 
-    // 4. Calcular e adicionar o total
     const totalGeral = carrinho.reduce((sum, item) => sum + (item.preco * item.qty), 0);
     mensagem += `----------------------------%0A`;
     mensagem += `*Total do Pedido: R$ ${totalGeral.toFixed(2).replace('.', ',')}*%0A`;
     mensagem += `----------------------------%0A`;
     mensagem += `%0A_Por favor, informe o endereço de entrega._`;
 
-    // 5. Criar o link e redirecionar
     const linkWhatsApp = `https://wa.me/${meuNumero}?text=${mensagem}`;
-    
-    // Opcional: Limpar o carrinho após enviar o pedido
-    // localStorage.removeItem('oliva_cart');
     
     window.open(linkWhatsApp, '_blank');
 }

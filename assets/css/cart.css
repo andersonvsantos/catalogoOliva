@@ -222,3 +222,27 @@ footer {
         text-align: left;
     }
 }
+
+/* Estilo do Toast (Aviso elegante) */
+.toast-aviso {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--text-dark);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s, top 0.3s;
+    pointer-events: none;
+    border: 1px solid var(--primary-color);
+}
+
+.toast-aviso.show {
+    opacity: 1;
+    top: 40px;
+}
