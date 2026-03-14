@@ -1,5 +1,5 @@
 // URL adaptada para rodar tanto local quanto na Vercel
-const API_URL = "http://localhost:3000/api/produtos";
+const API_URL = "/api/produtos";
 
 /**
  * Pede a senha via prompt e armazena na sessão do navegador.
