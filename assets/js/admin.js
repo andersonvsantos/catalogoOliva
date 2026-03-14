@@ -1,13 +1,13 @@
 const API_URL = "/api/produtos";
 
+// --- FUNÇÕES DE LÓGICA ---
+
 function obterSenha() {
     return sessionStorage.getItem('oliva_admin_pass');
 }
 
-// ESTA FUNÇÃO AGORA VALIDA COM O .ENV
 async function verificarSenhaManual() {
     const senhaDigitada = document.getElementById('senha-admin-input').value;
-    
     try {
         const response = await fetch('/api/login', {
             method: 'POST',
@@ -16,11 +16,10 @@ async function verificarSenhaManual() {
         });
 
         if (response.ok) {
-            // Se o servidor disse que a senha do .env bate:
             sessionStorage.setItem('oliva_admin_pass', 'logado'); 
             location.reload(); 
         } else {
-            alert("Senha incorreta de acordo com o servidor!");
+            alert("Senha incorreta!");
         }
     } catch (e) {
         alert("Erro ao conectar para validar senha.");
@@ -32,10 +31,10 @@ async function renderAdminList() {
     const overlay = document.getElementById('admin-login-overlay');
     
     if (!logado) {
-        overlay.style.display = 'flex';
+        if(overlay) overlay.style.display = 'flex';
         return;
     }
-    overlay.style.display = 'none';
+    if(overlay) overlay.style.display = 'none';
 
     try {
         const response = await fetch(API_URL);
@@ -44,7 +43,7 @@ async function renderAdminList() {
 
         list.innerHTML = produtos.map(p => `
             <tr>
-                <td data-label="Imagem"><img src="${p.img}" alt="${p.nome}"></td>
+                <td data-label="Imagem"><img src="${p.img}" alt="${p.nome}" class="img-thumb"></td>
                 <td data-label="Produto"><strong>${p.nome}</strong></td>
                 <td data-label="Preço">R$ ${p.preco.toFixed(2)}</td>
                 <td data-label="Ação">
@@ -53,11 +52,10 @@ async function renderAdminList() {
                     </button>
                 </td>
             </tr>
-        `).join('');
+        `).join('') || "<tr><td colspan='4' style='text-align:center;'>Nenhum produto cadastrado.</td></tr>";
     } catch (e) { console.error(e); }
 }
 
-// Funções handleSave e deleteProduct continuam IGUAIS (sem pedir senha no fetch)
 async function handleSave() {
     const produto = {
         nome: document.getElementById('adm-nome').value,
@@ -66,6 +64,8 @@ async function handleSave() {
         img: document.getElementById('adm-img').value,
         desc: document.getElementById('adm-desc').value || ""
     };
+
+    if(!produto.nome || !produto.preco) return alert("Preencha os campos obrigatórios!");
 
     const response = await fetch(API_URL, {
         method: 'POST',
@@ -80,9 +80,9 @@ async function handleSave() {
 }
 
 async function deleteProduct(id) {
-    if (!confirm("Excluir?")) return;
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-    location.reload();
+    if (!confirm("Excluir este produto?")) return;
+    const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    if(response.ok) location.reload();
 }
 
 window.onload = renderAdminList;
