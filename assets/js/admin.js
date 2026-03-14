@@ -6,9 +6,12 @@ function obterSenha() {
 
 async function verificarSenhaManual() {
     const senha = document.getElementById('senha-admin-input').value;
-    if (senha) {
+    // Aqui você pode colocar a senha fixa que deseja para "entrar" na tela
+    if (senha === "SUA_SENHA_AQUI") { 
         sessionStorage.setItem('oliva_admin_pass', senha);
         location.reload(); 
+    } else {
+        alert("Senha de acesso incorreta!");
     }
 }
 
@@ -39,7 +42,6 @@ async function renderAdminList() {
 }
 
 async function handleSave() {
-    const senha = obterSenha();
     const produto = {
         nome: document.getElementById('adm-nome').value,
         categoria: document.getElementById('adm-cat').value || "Geral",
@@ -50,31 +52,19 @@ async function handleSave() {
 
     const response = await fetch(API_URL, {
         method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': senha  // Envia a senha aqui
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(produto)
     });
 
-    if (response.status === 401) {
-        alert("Senha incorreta!");
-        sessionStorage.removeItem('oliva_admin_pass');
-        location.reload();
-    } else if (response.ok) {
+    if (response.ok) {
         alert("Produto salvo!");
         location.reload();
     }
 }
 
 async function deleteProduct(id) {
-    const senha = obterSenha();
     if (!confirm("Excluir?")) return;
-
-    await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
-        headers: { 'Authorization': senha }
-    });
+    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
     location.reload();
 }
 

@@ -7,7 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Conexão com o Turso
 const db = createClient({
     url: process.env.TURSO_DATABASE_URL,
     authToken: process.env.TURSO_AUTH_TOKEN,
@@ -19,23 +18,15 @@ app.get('/api/produtos', async (req, res) => {
         const result = await db.execute("SELECT * FROM produtos");
         res.json(result.rows);
     } catch (error) {
-        console.error("Erro no Banco:", error);
-        // Se a tabela não existir, retorna vazio em vez de travar o servidor
         res.json([]);
     }
 });
 
-// Rota para salvar produtos
+// Rota para salvar produtos - SEM VALIDAÇÃO DE SENHA
 app.post('/api/produtos', async (req, res) => {
     const { nome, categoria, desc, preco, img } = req.body;
-    const senha = req.headers['authorization'];
-
-    if (senha !== process.env.PASSWORD) {
-        return res.status(401).json({ error: 'Acesso negado' });
-    }
 
     try {
-        // Cria a tabela se ela não existir (Garante que não dê erro 500)
         await db.execute(`
             CREATE TABLE IF NOT EXISTS produtos (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,20 +44,13 @@ app.post('/api/produtos', async (req, res) => {
         });
         res.json({ success: true });
     } catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Erro ao salvar' });
     }
 });
 
-// Rota para deletar
+// Rota para deletar - SEM VALIDAÇÃO DE SENHA
 app.delete('/api/produtos/:id', async (req, res) => {
     const { id } = req.params;
-    const senha = req.headers['authorization'];
-
-    if (senha !== process.env.PASSWORD) {
-        return res.status(401).json({ error: 'Acesso negado' });
-    }
-
     try {
         await db.execute({
             sql: "DELETE FROM produtos WHERE id = ?",
@@ -78,5 +62,4 @@ app.delete('/api/produtos/:id', async (req, res) => {
     }
 });
 
-// EXPORTAÇÃO OBRIGATÓRIA PARA VERCEL
 module.exports = app;
