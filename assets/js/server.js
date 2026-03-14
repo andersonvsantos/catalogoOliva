@@ -1,13 +1,22 @@
 const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const cors = require('cors');
+const path = require('path');
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// Em Vercel não é permitido gravar no diretório da função; use /tmp (ephemeral)
+const dbFile = process.env.VERCEL ? '/tmp/oliva.sqlite' : path.join(__dirname, '../../oliva.sqlite');
+
 // Abre/Cria o arquivo físico do banco de dados
-const db = new sqlite3.Database('./oliva.sqlite');
+const db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+    if (err) {
+        console.error('Erro ao abrir o banco:', err);
+        // sem throw para não travar a função, mas responda erro em endpoints
+    }
+});
 
 // Cria a tabela se ela não existir
 db.run(`CREATE TABLE IF NOT EXISTS produtos (
@@ -45,4 +54,9 @@ app.delete('/api/produtos/:id', (req, res) => {
     });
 });
 
-app.listen(3000, () => console.log("Servidor Oliva rodando em http://localhost:3000"));
+if (process.env.VERCEL) {
+    // Vercel executa como função serverless, não chame listen
+    module.exports = app;
+} else {
+    app.listen(3000, () => console.log("Servidor Oliva rodando em http://localhost:3000"));
+}
