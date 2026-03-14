@@ -44,12 +44,16 @@ async function renderAdminList() {
 
         list.innerHTML = produtos.map(p => `
             <tr>
-                <td><img src="${p.img}" width="40"></td>
-                <td>${p.nome}</td>
-                <td>R$ ${p.preco}</td>
-                <td><button onclick="deleteProduct(${p.id})">❌</button></td>
+                <td data-label="Imagem"><img src="${p.img}" alt="${p.nome}"></td>
+                <td data-label="Produto"><strong>${p.nome}</strong></td>
+                <td data-label="Preço">R$ ${p.preco.toFixed(2)}</td>
+                <td data-label="Ação">
+                    <button class="btn-delete" onclick="deleteProduct(${p.id})">
+                        <i class="fa-solid fa-trash"></i> Excluir
+                    </button>
+                </td>
             </tr>
-        `).join('') || "<tr><td colspan='4'>Nenhum produto.</td></tr>";
+        `).join('');
     } catch (e) { console.error(e); }
 }
 
