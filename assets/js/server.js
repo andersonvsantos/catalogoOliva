@@ -62,4 +62,19 @@ app.delete('/api/produtos/:id', async (req, res) => {
     }
 });
 
+// Rota para validar login (Frontend -> Backend)
+app.post('/api/login', (req, res) => {
+    const { senha } = req.body;
+    const senhaMestra = process.env.PASSWORD;
+
+    if (senha && senha.trim() === senhaMestra.trim()) {
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false });
+    }
+});
+
+// Mantenha as outras rotas (GET, POST, DELETE) SEM a trava de senha, 
+// como combinamos, para evitar erros de cabeçalho.
+
 module.exports = app;

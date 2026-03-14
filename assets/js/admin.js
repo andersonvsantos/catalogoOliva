@@ -4,22 +4,34 @@ function obterSenha() {
     return sessionStorage.getItem('oliva_admin_pass');
 }
 
+// ESTA FUNÇÃO AGORA VALIDA COM O .ENV
 async function verificarSenhaManual() {
-    const senha = document.getElementById('senha-admin-input').value;
-    // Aqui você pode colocar a senha fixa que deseja para "entrar" na tela
-    if (senha === "SUA_SENHA_AQUI") { 
-        sessionStorage.setItem('oliva_admin_pass', senha);
-        location.reload(); 
-    } else {
-        alert("Senha de acesso incorreta!");
+    const senhaDigitada = document.getElementById('senha-admin-input').value;
+    
+    try {
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ senha: senhaDigitada })
+        });
+
+        if (response.ok) {
+            // Se o servidor disse que a senha do .env bate:
+            sessionStorage.setItem('oliva_admin_pass', 'logado'); 
+            location.reload(); 
+        } else {
+            alert("Senha incorreta de acordo com o servidor!");
+        }
+    } catch (e) {
+        alert("Erro ao conectar para validar senha.");
     }
 }
 
 async function renderAdminList() {
-    const senha = obterSenha();
+    const logado = obterSenha();
     const overlay = document.getElementById('admin-login-overlay');
     
-    if (!senha) {
+    if (!logado) {
         overlay.style.display = 'flex';
         return;
     }
@@ -41,6 +53,7 @@ async function renderAdminList() {
     } catch (e) { console.error(e); }
 }
 
+// Funções handleSave e deleteProduct continuam IGUAIS (sem pedir senha no fetch)
 async function handleSave() {
     const produto = {
         nome: document.getElementById('adm-nome').value,
