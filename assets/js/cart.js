@@ -57,7 +57,7 @@ function finalizarPedido() {
     }
 
     // 1. Defina o seu número de WhatsApp (apenas números, com DDD)
-    const meuNumero = "5511999999999"; 
+    const meuNumero = "5511983606737"; 
 
     // 2. Montar o cabeçalho da mensagem
     let mensagem = `*Novo Pedido - Oliva*%0A`;
