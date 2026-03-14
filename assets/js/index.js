@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/api/produtos";
+const API_URL = "api/produtos";
 let carrinho = JSON.parse(localStorage.getItem('oliva_cart')) || [];
 let produtosDaAPI = []; // Guardaremos os produtos aqui para busca e filtros
 let categoriaAtiva = "todos";
