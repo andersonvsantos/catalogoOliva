@@ -1,146 +1,82 @@
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@libsql/client');
-const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
-const app = express();
+require('dotenv').config();
 
+const app = express();
 app.use(cors());
 app.use(express.json());
 
-const useTurso = !!process.env.TURSO_DATABASE_URL;
-let db;
-let isTurso = false;
+// Conexão com o Turso
+const db = createClient({
+    url: process.env.TURSO_DATABASE_URL,
+    authToken: process.env.TURSO_AUTH_TOKEN,
+});
 
-async function toJsonList(result) {
-    if (!result) return [];
-    const cols = result.columns || [];
-    const values = result.values || [];
-    return values.map(row => Object.fromEntries(cols.map((c, i) => [c, row[i]])));
-}
-
-async function initSqlite() {
-    const dbFile = path.join(__dirname, '../../oliva.sqlite');
-    db = new sqlite3.Database(dbFile, sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, err => {
-        if (err) console.error('[sqlite] Erro ao abrir o banco:', err);
-    });
-
-    db.run(`CREATE TABLE IF NOT EXISTS produtos (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT,
-        categoria TEXT,
-        desc TEXT,
-        preco REAL,
-        img TEXT
-    )`, err => {
-        if (err) console.error('[sqlite] Erro ao criar tabela:', err);
-    });
-}
-
-async function initTurso() {
-    db = createClient({
-        url: process.env.TURSO_DATABASE_URL,
-        auth: { token: process.env.TURSO_AUTH_TOKEN },
-    });
-    isTurso = true;
-
-    try {
-        await db.execute(`CREATE TABLE IF NOT EXISTS produtos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT,
-            categoria TEXT,
-            desc TEXT,
-            preco REAL,
-            img TEXT
-        )`);
-    } catch (error) {
-        console.error('[turso] Erro ao criar tabela:', error);
-    }
-}
-
-(async () => {
-    if (useTurso) {
-        console.log('Using Turso/LibSQL DB');
-        await initTurso();
-    } else {
-        console.log('Using local sqlite DB');
-        await initSqlite();
-    }
-})();
-
+// Rota para buscar produtos
 app.get('/api/produtos', async (req, res) => {
     try {
-        if (isTurso) {
-            const result = await db.execute('SELECT * FROM produtos');
-            const rows = await toJsonList(result);
-            return res.json(rows);
-        }
-
-        db.all('SELECT * FROM produtos', [], (err, rows) => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json(rows);
-        });
+        const result = await db.execute("SELECT * FROM produtos");
+        res.json(result.rows);
     } catch (error) {
-        console.error('GET /api/produtos error', error);
-        res.status(500).json({ error: error.message });
+        console.error("Erro no Banco:", error);
+        // Se a tabela não existir, retorna vazio em vez de travar o servidor
+        res.json([]);
     }
 });
 
+// Rota para salvar produtos
 app.post('/api/produtos', async (req, res) => {
-    if (req.headers.authorization !== process.env.password) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
-
     const { nome, categoria, desc, preco, img } = req.body;
+    const senha = req.headers['authorization'];
 
-    if (!nome || !preco || !img) {
-        return res.status(400).json({ error: 'Faltam campos obrigatórios' });
+    if (senha !== process.env.PASSWORD) {
+        return res.status(401).json({ error: 'Acesso negado' });
     }
 
     try {
-        if (isTurso) {
-            await db.execute('INSERT INTO produtos (nome, categoria, desc, preco, img) VALUES (?,?,?,?,?)', [nome, categoria, desc, preco, img]);
-            const idResult = await db.execute('SELECT last_insert_rowid() as id');
-            const idRow = await toJsonList(idResult);
-            const id = idRow[0]?.id || null;
-            return res.json({ id });
-        }
+        // Cria a tabela se ela não existir (Garante que não dê erro 500)
+        await db.execute(`
+            CREATE TABLE IF NOT EXISTS produtos (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT,
+                categoria TEXT,
+                desc TEXT,
+                preco REAL,
+                img TEXT
+            )
+        `);
 
-        db.run('INSERT INTO produtos (nome, categoria, desc, preco, img) VALUES (?,?,?,?,?)', [nome, categoria, desc, preco, img], function(err) {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ id: this.lastID });
+        await db.execute({
+            sql: "INSERT INTO produtos (nome, categoria, desc, preco, img) VALUES (?, ?, ?, ?, ?)",
+            args: [nome, categoria, desc, preco, img]
         });
+        res.json({ success: true });
     } catch (error) {
-        console.error('POST /api/produtos error', error);
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        res.status(500).json({ error: 'Erro ao salvar' });
     }
 });
 
+// Rota para deletar
 app.delete('/api/produtos/:id', async (req, res) => {
-    if (req.headers.authorization !== process.env.password) {
-        return res.status(401).json({ error: 'Unauthorized' });
+    const { id } = req.params;
+    const senha = req.headers['authorization'];
+
+    if (senha !== process.env.PASSWORD) {
+        return res.status(401).json({ error: 'Acesso negado' });
     }
 
-    const id = req.params.id;
-
     try {
-        if (isTurso) {
-            await db.execute('DELETE FROM produtos WHERE id = ?', [id]);
-            return res.json({ message: 'Removido' });
-        }
-
-        db.run('DELETE FROM produtos WHERE id = ?', [id], err => {
-            if (err) return res.status(500).json({ error: err.message });
-            res.json({ message: 'Removido' });
+        await db.execute({
+            sql: "DELETE FROM produtos WHERE id = ?",
+            args: [id]
         });
+        res.json({ success: true });
     } catch (error) {
-        console.error('DELETE /api/produtos/:id error', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Erro ao deletar' });
     }
 });
 
-if (process.env.VERCEL) {
-    module.exports = app;
-} else {
-    app.listen(3000, () => console.log('Servidor Oliva rodando em http://localhost:3000'));
-}
+// EXPORTAÇÃO OBRIGATÓRIA PARA VERCEL
+module.exports = app;
