@@ -122,15 +122,15 @@ header {
     max-width: 1400px;
     margin: auto;
     width: 100%;
+    align-items: stretch; /* AJUSTE 1: Força os cards a terem a mesma altura na linha */
 }
 
 .product-card {
     background: transparent;
-    display: flex;
+    display: flex; /* AJUSTE 2: Torna o card um container flexível */
     flex-direction: column;
-    height: 100%; /* Garante que todos os cards tenham a mesma altura na grade */
+    height: 100%;
 }
-
 
 .product-info {
     display: flex;
@@ -143,24 +143,22 @@ header {
     font-size: 0.9rem;
     margin-bottom: 15px;
     
-    /* Mantém o corte de texto que você já aplicou */
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;  
     overflow: hidden;
     
-    /* Define uma altura mínima para 2 linhas, evitando que 
-       cards com texto curto fiquem menores */
     min-height: 2.7em; 
 }
 
 .price {
     font-weight: 400;
     font-size: 1.1rem;
-    margin-top: auto; /* MÁGICA: Empurra o preço e o que vem depois para o fundo */
+    margin-top: auto; /* AJUSTE 3: "Imã" que empurra o preço e botão para o rodapé */
     margin-bottom: 20px;
     display: block;
 }
+
 .img-wrapper {
     width: 100%;
     aspect-ratio: 1 / 1.2;
