@@ -74,6 +74,21 @@ app.post('/api/login', (req, res) => {
     }
 });
 
+// Rota para editar produto
+app.put('/api/produtos/:id', async (req, res) => {
+    const { id } = req.params;
+    const { nome, categoria, desc, preco, img } = req.body;
+    try {
+        await db.execute({
+            sql: "UPDATE produtos SET nome = ?, categoria = ?, desc = ?, preco = ?, img = ? WHERE id = ?",
+            args: [nome, categoria, desc, preco, img, id]
+        });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao atualizar' });
+    }
+});
+
 // Mantenha as outras rotas (GET, POST, DELETE) SEM a trava de senha, 
 // como combinamos, para evitar erros de cabeçalho.
 
