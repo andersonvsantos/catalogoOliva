@@ -43,7 +43,7 @@ function applyFilters() {
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
     
     const filtrados = produtosDaAPI.filter(p => {
-        const matchesSearch = p.nome.toLowerCase().includes(searchTerm) || p.desc.toLowerCase().includes(searchTerm);
+        const matchesSearch = p.nome.toLowerCase().includes(searchTerm) || (p.desc && p.desc.toLowerCase().includes(searchTerm));
         const matchesCategory = categoriaAtiva === "todos" || p.categoria === categoriaAtiva;
         return matchesSearch && matchesCategory;
     });
@@ -51,25 +51,27 @@ function applyFilters() {
     loadCatalog(filtrados);
 }
 
-// 3. Renderizar na Tela
+// 3. Renderizar na Tela (ESTRUTURA CORRIGIDA AQUI)
 function loadCatalog(items) {
     grid.innerHTML = items.map(p => `
         <div class="product-card">
-            <div class="img-wrapper"><img src="${p.img}" alt="${p.nome}"></div>
+            <div class="img-wrapper">
+                <img src="${p.img}" alt="${p.nome}">
+            </div>
             <div class="product-info">
                 <span class="category-tag">${p.categoria}</span>
                 <h3>${p.nome}</h3>
-                <p>${p.desc}</p>
+                <p>${p.desc || ""}</p>
                 <span class="price">R$ ${p.preco.toFixed(2).replace('.', ',')}</span>
-                <div class="action-container" id="btn-container-${p.id}">
-                    ${renderActionButton(p)}
-                </div>
+            </div>
+            <div class="action-container" id="btn-container-${p.id}">
+                ${renderActionButton(p)}
             </div>
         </div>
     `).join('');
 }
 
-// 4. Lógica do Carrinho (Mantém localStorage)
+// 4. Lógica do Carrinho
 function renderActionButton(product) {
     const itemInCart = carrinho.find(item => item.id === product.id);
     if (itemInCart) {
