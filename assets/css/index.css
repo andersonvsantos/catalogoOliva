@@ -159,7 +159,13 @@ header {
     color: var(--text-light);
     font-size: 0.9rem;
     margin-bottom: 10px;
-    height: 40px;
+    
+    /* Substitua o height: 40px por isso: */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Número de linhas que você quer mostrar */
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    min-height: 2.8em; /* Garante que cards com 1 linha tenham o mesmo tamanho dos de 2 */
 }
 
 .price {
