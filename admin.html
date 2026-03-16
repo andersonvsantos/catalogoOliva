@@ -28,12 +28,22 @@
             <h3>Novo Produto</h3>
             <div class="form-grid">
                 <input type="text" id="adm-nome" placeholder="Nome do Produto">
-                <input type="text" id="adm-cat" placeholder="Categoria (Ex: Colares)">
+                <select id="adm-cat">
+                    <option value="" disabled selected>Selecione uma Categoria</option>
+                    <option value="Colares">Colares</option>
+                    <option value="Brincos">Brincos</option>
+                    <option value="Anéis">Anéis</option>
+                    <option value="Pulseiras">Pulseiras</option>
+                    <option value="Tornozeleiras">Tornozeleiras</option>
+                    <option value="Conjuntos">Conjuntos</option>
+                    <option value="Geral">Outros/Geral</option>
+                </select>
                 <input type="number" id="adm-preco" placeholder="Preço (Ex: 250.50)">
                 <input type="text" id="adm-img" placeholder="URL da Imagem">
                 <input type="text" id="adm-desc" class="full-width" placeholder="Breve descrição">
             </div>
-            <button class="btn-save" onclick="handleSave()">Salvar no SQLite <i class="fa-solid fa-database"></i></button>
+            <button class="btn-save" onclick="handleSave()">Salvar no banco de dados <i class="fa-solid fa-database"></i></button>
+<button id="btn-cancelar" onclick="resetarFormulario()" style="display:none; background:#888; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;">Cancelar</button>
         </div>
 
         <table class="admin-table">

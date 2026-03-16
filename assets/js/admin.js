@@ -1,7 +1,5 @@
 const API_URL = "/api/produtos";
-let editModeId = null; // Controla se estamos criando ou editando
-
-// --- FUNÇÕES DE LÓGICA ---
+let editModeId = null; 
 
 function obterSenha() {
     return sessionStorage.getItem('oliva_admin_pass');
@@ -23,7 +21,7 @@ async function verificarSenhaManual() {
             alert("Senha incorreta!");
         }
     } catch (e) {
-        alert("Erro ao conectar para validar senha.");
+        alert("Erro ao conectar.");
     }
 }
 
@@ -60,37 +58,55 @@ async function renderAdminList() {
     } catch (e) { console.error(e); }
 }
 
-// Função que preenche o formulário para editar
+// --- ESSA FUNÇÃO AGORA TRATA O SELECT CORRETAMENTE ---
 function prepareEdit(produto) {
     editModeId = produto.id;
     
     document.getElementById('adm-nome').value = produto.nome;
-    document.getElementById('adm-cat').value = produto.categoria;
+    document.getElementById('adm-cat').value = produto.categoria; // O select seleciona a opção sozinho aqui
     document.getElementById('adm-preco').value = produto.preco;
     document.getElementById('adm-img').value = produto.img;
     document.getElementById('adm-desc').value = produto.desc;
 
-    // Altera o visual do formulário para indicar edição
+    // Ajusta Interface para modo Edição
     const btnSave = document.querySelector('.btn-save');
     btnSave.innerHTML = `Atualizar Produto <i class="fa-solid fa-arrows-rotate"></i>`;
     btnSave.style.background = "#f39c12";
     
-    // Rola para o topo para facilitar a visualização
+    document.getElementById('btn-cancelar').style.display = 'inline-block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+// --- FUNÇÃO PARA LIMPAR TUDO ---
+function resetarFormulario() {
+    editModeId = null;
+    document.getElementById('adm-nome').value = "";
+    document.getElementById('adm-cat').value = ""; // Volta para o "Selecione..."
+    document.getElementById('adm-preco').value = "";
+    document.getElementById('adm-img').value = "";
+    document.getElementById('adm-desc').value = "";
+
+    const btnSave = document.querySelector('.btn-save');
+    btnSave.innerHTML = `Salvar no banco de dados <i class="fa-solid fa-database"></i>`;
+    btnSave.style.background = "#333";
+    
+    document.getElementById('btn-cancelar').style.display = 'none';
+}
+
 async function handleSave() {
+    const categoriaSelect = document.getElementById('adm-cat');
     const produto = {
         nome: document.getElementById('adm-nome').value,
-        categoria: document.getElementById('adm-cat').value || "Geral",
+        categoria: categoriaSelect.value, // Pega o valor selecionado no dropbox
         preco: parseFloat(document.getElementById('adm-preco').value),
         img: document.getElementById('adm-img').value,
         desc: document.getElementById('adm-desc').value || ""
     };
 
-    if(!produto.nome || !produto.preco) return alert("Preencha os campos obrigatórios!");
+    if(!produto.nome || !produto.preco || !produto.categoria) {
+        return alert("Preencha todos os campos, incluindo a categoria!");
+    }
 
-    // Se editModeId tiver valor, usa PUT, senão usa POST
     const method = editModeId ? 'PUT' : 'POST';
     const url = editModeId ? `${API_URL}/${editModeId}` : API_URL;
 
@@ -102,6 +118,7 @@ async function handleSave() {
 
     if (response.ok) {
         alert(editModeId ? "Produto atualizado!" : "Produto salvo!");
+        resetarFormulario(); // Limpa em vez de dar reload direto para uma UX melhor
         location.reload();
     } else {
         alert("Erro ao salvar.");
